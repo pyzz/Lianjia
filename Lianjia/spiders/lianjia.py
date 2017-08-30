@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+import math
 import scrapy
 from Lianjia.items import LianjiaItem
 from Lianjia.parses import HOUSE_INFO
@@ -9,12 +10,13 @@ class LianjiaSpider(scrapy.Spider):
     name = 'lianjia'
     allowed_domains = ['lianjia.com']
     start_urls = ['https://bj.lianjia.com/ershoufang/']
-    patt = re.compile(r'/pg\d{0,3}/')
+    next_page = True    # 是否翻页
 
 
     def parse(self, response):
+        # 区域页
         area_infos = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div/a')
-        for area in area_infos[:1]:
+        for area in area_infos:
         	area_url = response.urljoin(area.xpath('@href').extract_first())
         	area_name = area.xpath('text()').extract_first()
         	yield scrapy.Request(
@@ -26,24 +28,29 @@ class LianjiaSpider(scrapy.Spider):
 
     def list_page(self, response):
     	home_urls = response.xpath('/html/body/div[4]/div[1]/ul/li/div[1]/div[1]/a/@href').extract()
-    	for url in home_urls[:1]:
+    	for url in home_urls:
     		yield scrapy.Request(
     			response.urljoin(url),
     			meta=response.meta,
     			callback=self.detail_page,
                 priority=3,
     		)
+            
+        # 翻页    
+        if self.next_page:
+            self.next_page = False
+            all_houses = int(response.xpath('/html/body/div[4]/div[1]/div[2]/h2/span/text()').extract_first())
+            pages = int(math.ceil(all_houses/30))
+            base_url = response.url
+            for next_page in range(1, pages+1):
+                url = ''.join((base_url, 'pg{}/'.format(next_page)))
+                yield scrapy.Request(
+                    url,
+                    callback=self.list_page,
+                    meta=response.meta,
+                    priority=4,
+                )
 
-        # 翻页
-    	all_urls = response.xpath('//a/@href').extract()
-    	next_page_urls = [url for url in all_urls if re.search(self.patt, url)]
-    	for next_page in next_page_urls[:1]:
-    		yield scrapy.Request(
-    			response.urljoin(next_page),
-    			callback=self.list_page,
-    			meta=response.meta,
-                priority=4,
-    		)
 
     def detail_page(self, response):
         res_path = response.xpath
