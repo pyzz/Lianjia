@@ -21,4 +21,5 @@ class LianjiaPipeline(object):
             self.logger.warning(e)
     	else:
     		self.session.commit()
+        return item
 
