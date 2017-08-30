@@ -23,7 +23,7 @@ class LianjiaSpider(scrapy.Spider):
         		callback=self.list_page,
                 priority=2,
         	)
-middlewares
+
     def list_page(self, response):
     	home_urls = response.xpath('/html/body/div[4]/div[1]/ul/li/div[1]/div[1]/a/@href').extract()
     	for url in home_urls[:1]:
