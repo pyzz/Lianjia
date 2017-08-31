@@ -6,6 +6,7 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from databases.basic_db import engine, session
 from databases.tables import *
+from items import LianjiaItem, LianjiaSaleItem
 
 class LianjiaPipeline(object):
     
@@ -14,12 +15,18 @@ class LianjiaPipeline(object):
         self.session = session
 
     def process_item(self, item, spider):
-        try:
+        data = None
+        if isinstance(item, LianjiaItem):
             data = Lianjia(**item)
-            self.session.add(data)
-            self.session.commit()
-        except Exception as e:
-            print e
-            self.session.rollback()
+        elif isinstance(item, LianjiaSaleItem):
+            data = LianjiaSale(**item)
+
+        if data:
+            try:
+                self.session.add(data)
+                self.session.commit()
+            except Exception as e:
+                print e
+                self.session.rollback()
         return item
 
