@@ -11,10 +11,11 @@ import scrapy
 class LianjiaItem(scrapy.Item):
     # define the fields for your item here like:
     house_id = scrapy.Field()    # 房屋id
-    area_name = scrapy.Field()
+    area_name = scrapy.Field()  # 区名
+    position_name = scrapy.Field()  # 地点名
     name = scrapy.Field()	# 名称
-    price = scrapy.Field()	# 价钱
-    unit_all = scrapy.Field()	# 价钱单位
+    price = scrapy.Field()	# 总价
+    unit_all = scrapy.Field()	# 总价单位
     unit_price = scrapy.Field()	# 单价
     unit = scrapy.Field()	# 单位
     
@@ -40,6 +41,8 @@ class LianjiaItem(scrapy.Item):
     property_blong = scrapy.Field() 	# 产权所属
     pledge_info = scrapy.Field() 	# 抵押信息
     backups = scrapy.Field() 	# 房本备件
+
+    res_block_position = scrapy.Field()   # 经纬度
     page_url = scrapy.Field()   # 页面地址
 
 

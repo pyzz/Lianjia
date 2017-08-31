@@ -10,7 +10,8 @@ class Lianjia(Base):
     __tablename__ = "lianjia_table"
 
     house_id = Column(String(200), primary_key=True)
-    area_name = Column(String(200))   
+    area_name = Column(String(200))
+    position_name = Column(String(200))
     name = Column(String(200))
     unit_all = Column(String(200))
     price = Column(String(200))
@@ -39,6 +40,7 @@ class Lianjia(Base):
     property_blong = Column(String(200))
     pledge_info = Column(String(200))
     backups = Column(String(200))
+    res_block_position = Column(String(200))
 
     create_time = Column(TIMESTAMP, server_default=func.now())   
     page_url = Column(String(200))
