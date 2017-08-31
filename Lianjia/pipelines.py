@@ -14,12 +14,12 @@ class LianjiaPipeline(object):
         self.session = session
 
     def process_item(self, item, spider):
-    	try:
-    		data = Lianjia(**item)
-    		self.session.add(data)
-    	except Exception as e:
-            self.logger.warning(e)
-    	else:
-    		self.session.commit()
+        try:
+            data = Lianjia(**item)
+            self.session.add(data)
+            self.session.commit()
+        except Exception as e:
+            print e
+            self.session.rollback()
         return item
 
