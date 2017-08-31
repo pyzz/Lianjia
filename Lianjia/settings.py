@@ -24,6 +24,10 @@ ROBOTSTXT_OBEY = False
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
+RETRY_ENABLED = True
+RETRY_TIMES = 5
+RETRY_HTTP_CODES = [404, 400, 429, 500, 502, 503, 504]
+
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
@@ -38,7 +42,7 @@ COOKIES_ENABLED = False
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 
-REDIRECT_ENABLED = True
+REDIRECT_ENABLED = False
 
 # Override the default request headers:
 #DEFAULT_REQUEST_HEADERS = {
@@ -55,7 +59,8 @@ REDIRECT_ENABLED = True
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   'Lianjia.middlewares.HeadersMiddleware': 100,
+   'Lianjia.middlewares.headers.HeadersMiddleware': 100,
+   'Lianjia.middlewares.proxy.ProxyMiddleware': 110,
 }
 
 # Enable or disable extensions
@@ -66,9 +71,9 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'Lianjia.pipelines.LianjiaPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'Lianjia.pipelines.LianjiaPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -90,3 +95,6 @@ DOWNLOADER_MIDDLEWARES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+MYSQL_URL = 'mysql+pymysql://root:ql@127.0.0.1:3306/lianjia?charset=utf8'
