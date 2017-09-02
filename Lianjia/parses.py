@@ -33,7 +33,7 @@ HOUSE_INFO = {
 
 SALE_HOUSE_INFO = {
 	'house_id': '//*[@id="introduction"]/div/div[2]/div[2]/ul/li[1]/text()',
-	'name': '/html/body/div[3]/div/text()',
+	'name': '/html/body/div[4]/div/text()',
 	'sale_time': '/html/body/div[3]/div/span/text()',
 	'sale_price': '/html/body/section[1]/div[2]/div[2]/div[1]/span/i/text()',
 	'unit_price': '/html/body/section[1]/div[2]/div[2]/div[1]/b/text()',
