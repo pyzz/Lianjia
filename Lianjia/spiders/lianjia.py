@@ -4,18 +4,22 @@ import math
 import scrapy
 from Lianjia.items import LianjiaItem, LianjiaSaleItem
 from Lianjia.parses import HOUSE_INFO, SALE_HOUSE_INFO
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class LianjiaSpider(scrapy.Spider):
     name = 'lianjia'
     allowed_domains = ['lianjia.com']
-    start_urls = ['https://bj.lianjia.com/ershoufang/']
 
 
-    def __init__(self, home_type, *args, **kwargs):
+    def __init__(self, home_type, areas=None, *args, **kwargs):
         super(LianjiaSpider, self).__init__(*args, **kwargs)
         self.home_type = home_type
         self.start_url = 'https://bj.lianjia.com/{}/'.format(home_type)
+        ascii_area_list = areas.split(' ')
+        self.areas = [unicode(i) for i in ascii_area_list]
 
     def start_requests(self):
         return [scrapy.Request(self.start_url, callback=self.area)]
@@ -23,20 +27,23 @@ class LianjiaSpider(scrapy.Spider):
     def area(self, response):
         """区"""
         area_infos = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div/a')
+        # 筛选地区
+        if self.areas is not None:
+            area_infos = [area for area in area_infos if area.xpath('text()').extract_first() in self.areas]
+        print area_infos
         print len(area_infos)
-        for area in area_infos:
-            area_url = response.urljoin(area.xpath('@href').extract_first())
-            area_name = area.xpath('text()').extract_first()
-            yield scrapy.Request(
-                area_url,
-                meta={'area_name': area_name},
-                callback=self.position,
-                priority=2,
-            )
+        # for area in area_infos:
+        #     area_url = response.urljoin(area.xpath('@href').extract_first())
+        #     area_name = area.xpath('text()').extract_first()
+        #     yield scrapy.Request(
+        #         area_url,
+        #         meta={'area_name': area_name},
+        #         callback=self.position,
+        #         priority=2,
+        #     )
 
     def position(self, response):
         positions = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div[2]/a')
-        print len(positions)
         for pos in positions:
             pos_name = pos.xpath('text()').extract_first()
             pos_href = pos.xpath('@href').extract_first()
@@ -74,7 +81,7 @@ class LianjiaSpider(scrapy.Spider):
         if self.home_type == 'ershoufang':
             home_urls = response.xpath('/html/body/div[4]/div[1]/ul/li/div[1]/div[1]/a/@href').extract()
         elif self.home_type == 'chengjiao':
-            home_urls = response.xpath('/html/body/div[5]/div[1]/ul/li/div[2]/div[1]/a/@href').extract()
+            home_urls = response.xpath('/html/body/div[5]/div[1]/ul/li/a/@href').extract()
 
         for url in home_urls:
             yield scrapy.Request(
@@ -94,12 +101,18 @@ class LianjiaSpider(scrapy.Spider):
 
         if self.home_type == 'ershoufang':
             for key, patt in HOUSE_INFO.iteritems():
-                res[key] = response.xpath(patt).extract_first().strip()
+                try:
+                    res[key] = response.xpath(patt).extract_first().strip()
+                except:
+                    res[key] = None
             yield LianjiaItem(**res)
 
         elif self.home_type == 'chengjiao':
             for key, patt in SALE_HOUSE_INFO.iteritems():
-                res[key] = response.xpath(patt).extract_first().strip()
+                try:
+                    res[key] = response.xpath(patt).extract_first().strip()
+                except:
+                    res[key] = None
             yield LianjiaSaleItem(**res)
 
 
