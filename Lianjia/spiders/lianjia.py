@@ -22,25 +22,27 @@ class LianjiaSpider(scrapy.Spider):
         self.areas = [unicode(i) for i in ascii_area_list]
 
     def start_requests(self):
-        return [scrapy.Request(self.start_url, callback=self.area)]
+        return [scrapy.Request(self.start_url, callback=self.area, dont_filter=True)]
 
     def area(self, response):
         """区"""
         area_infos = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div/a')
+        print area_infos, '=========='
         # 筛选地区
         if self.areas is not None:
             area_infos = [area for area in area_infos if area.xpath('text()').extract_first() in self.areas]
-        print area_infos
-        print len(area_infos)
-        # for area in area_infos:
-        #     area_url = response.urljoin(area.xpath('@href').extract_first())
-        #     area_name = area.xpath('text()').extract_first()
-        #     yield scrapy.Request(
-        #         area_url,
-        #         meta={'area_name': area_name},
-        #         callback=self.position,
-        #         priority=2,
-        #     )
+        print area_infos, '---------'
+        print self.areas
+        for area in area_infos:
+            area_url = response.urljoin(area.xpath('@href').extract_first())
+            area_name = area.xpath('text()').extract_first()
+            yield scrapy.Request(
+                area_url,
+                meta={'area_name': area_name},
+                callback=self.position,
+                priority=2,
+                dont_filter=True
+            )
 
     def position(self, response):
         positions = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div[2]/a')
@@ -54,7 +56,8 @@ class LianjiaSpider(scrapy.Spider):
                 meta={
                     'area_name': response.meta['area_name'],
                     'position_name': pos_name
-                }
+                },
+                dont_filter=True
             )
 
     def pos_count_page(self, response):
@@ -73,6 +76,7 @@ class LianjiaSpider(scrapy.Spider):
                     callback=self.list_page,
                     meta=response.meta,
                     priority=4,
+                    dont_filter=True
                 )
 
 

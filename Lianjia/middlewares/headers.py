@@ -1,5 +1,6 @@
 import random
 from Lianjia.constants.headers import LIANJIA_HEADERS, WEB_USER_AGENTS
+from Lianjia.settings import REDIS_HOST, REDIS_PORT
 
 class HeadersMiddleware(object):
     def process_request(self, request, spider):

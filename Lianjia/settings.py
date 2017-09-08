@@ -21,6 +21,9 @@ NEWSPIDER_MODULE = 'Lianjia.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
+# LOG_FILE = 'spider.log'
+LOG_LEVEL = "DEBUG"
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -31,7 +34,7 @@ RETRY_HTTP_CODES = [404, 400, 429, 500, 502, 503, 504]
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 0.25
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -59,8 +62,9 @@ REDIRECT_ENABLED = False
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-   'Lianjia.middlewares.headers.HeadersMiddleware': 100,
-   'Lianjia.middlewares.proxy.ProxyMiddleware': 110,
+	'Lianjia.middlewares.dupefilter.DupefilterMiddleware': 100,
+   'Lianjia.middlewares.headers.HeadersMiddleware': 110,
+   'Lianjia.middlewares.proxy.ProxyMiddleware': 120,
 }
 
 # Enable or disable extensions
@@ -74,6 +78,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
    'Lianjia.pipelines.LianjiaPipeline': 300,
 }
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -97,4 +102,10 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
-MYSQL_URL = 'mysql+pymysql://root:ql@127.0.0.1:3306/lianjia?charset=utf8'
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+
+
+MYSQL_URL = 'mysql+pymysql://root:test@127.0.0.1:3306/lianjia?charset=utf8'
