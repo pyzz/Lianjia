@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import math
+import urlparse
 import scrapy
 from Lianjia.items import LianjiaItem, LianjiaSaleItem
 from Lianjia.parses import HOUSE_INFO, SALE_HOUSE_INFO
@@ -14,12 +15,15 @@ class LianjiaSpider(scrapy.Spider):
     allowed_domains = ['lianjia.com']
 
 
-    def __init__(self, home_type, areas=None, *args, **kwargs):
+    def __init__(self, city_url, home_type, areas=None, *args, **kwargs):
         super(LianjiaSpider, self).__init__(*args, **kwargs)
+        self.start_url = urlparse.urljoin(city_url, home_type)+'/'
         self.home_type = home_type
-        self.start_url = 'https://bj.lianjia.com/{}/'.format(home_type)
-        ascii_area_list = areas.split(' ')
-        self.areas = [unicode(i) for i in ascii_area_list]
+        if areas is None:
+            self.areas = None
+        else:
+            ascii_area_list = areas.split('|')
+            self.areas = [unicode(i) for i in ascii_area_list]
 
     def start_requests(self):
         return [scrapy.Request(self.start_url, callback=self.area, dont_filter=True)]
@@ -27,12 +31,9 @@ class LianjiaSpider(scrapy.Spider):
     def area(self, response):
         """区"""
         area_infos = response.xpath('/html/body/div[3]/div[1]/dl[2]/dd/div[1]/div/a')
-        print area_infos, '=========='
         # 筛选地区
         if self.areas is not None:
             area_infos = [area for area in area_infos if area.xpath('text()').extract_first() in self.areas]
-        print area_infos, '---------'
-        print self.areas
         for area in area_infos:
             area_url = response.urljoin(area.xpath('@href').extract_first())
             area_name = area.xpath('text()').extract_first()

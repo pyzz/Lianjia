@@ -7,7 +7,7 @@ from basic_db import Base
 
 
 class Lianjia(Base):
-    __tablename__ = "lianjia_table"
+    __tablename__ = "lianjia_ershou"
 
     house_id = Column(String(200), primary_key=True)
     area_name = Column(String(200))
@@ -47,7 +47,7 @@ class Lianjia(Base):
     
     
 class LianjiaSale(Base):
-    __tablename__ = "lianjia_sale_table"
+    __tablename__ = "lianjia_sale"
 
     house_id = Column(String(200), primary_key=True)  # 房屋id
     area_name = Column(String(200))  # 区名
