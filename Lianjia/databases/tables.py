@@ -10,6 +10,7 @@ class Lianjia(Base):
     __tablename__ = "lianjia_ershou"
 
     house_id = Column(String(200), primary_key=True)
+    city = Column(String(200))
     area_name = Column(String(200))
     position_name = Column(String(200))
     name = Column(String(200))
@@ -42,14 +43,15 @@ class Lianjia(Base):
     backups = Column(String(200))
     res_block_position = Column(String(200))
 
-    create_time = Column(TIMESTAMP, server_default=func.now())   
+    create_time = Column(TIMESTAMP, server_default=func.now())
     page_url = Column(String(200))
-    
-    
+
+
 class LianjiaSale(Base):
     __tablename__ = "lianjia_sale"
 
     house_id = Column(String(200), primary_key=True)  # 房屋id
+    city = Column(String(200))  # 城市
     area_name = Column(String(200))  # 区名
     position_name = Column(String(200))  # 地点名
     name = Column(String(200))  # 名称
@@ -74,7 +76,7 @@ class LianjiaSale(Base):
     property_years = Column(String(200))  # 产权
     is_lift = Column(String(200))  # 是否配备电梯
 
-    res_block_position = Column(String(200))    # 经纬度
+    res_block_position = Column(String(200))  # 经纬度
 
     create_time = Column(TIMESTAMP, server_default=func.now())
     page_url = Column(String(200))

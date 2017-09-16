@@ -63,8 +63,8 @@ REDIRECT_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 	'Lianjia.middlewares.dupefilter.DupefilterMiddleware': 100,
-   'Lianjia.middlewares.headers.HeadersMiddleware': 110,
-   'Lianjia.middlewares.proxy.ProxyMiddleware': 120,
+    'Lianjia.middlewares.headers.HeadersMiddleware': 110,
+    'Lianjia.middlewares.proxy.ProxyMiddleware': 120,
 }
 
 # Enable or disable extensions

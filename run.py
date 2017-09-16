@@ -20,7 +20,7 @@ def req_citys():
     return citys
 
 
-def city_map(ctx, city):
+def city_map(city):
     file_name = 'citys.json'
     if file_name in os.listdir('.'):
         with open(file_name) as f:
@@ -31,17 +31,18 @@ def city_map(ctx, city):
 
 
 @click.command()
-@click.option('--city', callback=city_map, default='北京', help="input the city name. default 北京")
+@click.option('--city', default='北京', help="input the city name. default 北京")
 @click.option('--types', default='ershoufang', help="ershoufang/chengjiaoliang. default ershoufang")
 @click.option('--areas', default=None,
               help="please input the area name, example '海淀' or '海淀|东城'. if not input, spider will crawl all areas")
 def main(city, types, areas):
     from scrapy.cmdline import execute
+    city_url = city_map(city)
     if areas is None:
-        start_command = "scrapy crawl lianjia -a city_url={} -a home_type={}".format(city, types)
+        start_command = "scrapy crawl lianjia -a city_url={} -a home_type={} -a city={}".format(city_url, types, city)
         execute(start_command.split(' '))
     else:
-        start_command = "scrapy crawl lianjia -a city_url={} -a home_type={} -a areas={}".format(city, types, areas)
+        start_command = "scrapy crawl lianjia -a city_url={} -a home_type={} -a areas={} -a city={}".format(city_url, types, areas, city)
         execute(start_command.split(' '))
 
 

@@ -15,10 +15,11 @@ class LianjiaSpider(scrapy.Spider):
     allowed_domains = ['lianjia.com']
 
 
-    def __init__(self, city_url, home_type, areas=None, *args, **kwargs):
+    def __init__(self, city_url, home_type, city, areas=None, *args, **kwargs):
         super(LianjiaSpider, self).__init__(*args, **kwargs)
         self.start_url = urlparse.urljoin(city_url, home_type)+'/'
         self.home_type = home_type
+        self.city = city
         if areas is None:
             self.areas = None
         else:
@@ -99,6 +100,7 @@ class LianjiaSpider(scrapy.Spider):
 
     def detail_page(self, response):
         res = {}
+        res['city'] = self.city
         res['area_name'] = response.meta['area_name']
         res['position_name'] = response.meta['position_name']
         res['page_url'] = response.url
